@@ -1,25 +1,37 @@
-import torch
-import numpy as np
+import argparse
+from copy import deepcopy
 import os
 import pickle
-import argparse
-import matplotlib.pyplot as plt
-from copy import deepcopy
-from tqdm import tqdm
+
+from aloha.constants import (
+    DT,
+    FOLLOWER_GRIPPER_JOINT_OPEN,
+)
 from einops import rearrange
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
+from tqdm import tqdm
 
-from constants import DT
-from constants import PUPPET_GRIPPER_JOINT_OPEN
-from utils import load_data # data functions
-from utils import sample_box_pose, sample_insertion_pose # robot functions
-from utils import compute_dict_mean, set_seed, detach_dict # helper functions
-from policy import ACTPolicy, CNNMLPPolicy
-from visualize_episodes import save_videos
+from act.policy import (
+    ACTPolicy,
+    CNNMLPPolicy,
+)
+from act.sim_env import (
+    BOX_POSE,
+)
+from act.utils import (
+    compute_dict_mean,
+    detach_dict,
+    load_data,
+    sample_box_pose,
+    sample_insertion_pose,
+    set_seed,
+)
+from act.visualize_episodes import (
+    save_videos,
+)
 
-from sim_env import BOX_POSE
-
-import IPython
-e = IPython.embed
 
 def main(args):
     set_seed(1)
@@ -36,10 +48,10 @@ def main(args):
     # get task parameters
     is_sim = task_name[:4] == 'sim_'
     if is_sim:
-        from constants import SIM_TASK_CONFIGS
+        from act.constants import SIM_TASK_CONFIGS
         task_config = SIM_TASK_CONFIGS[task_name]
     else:
-        from aloha_scripts.constants import TASK_CONFIGS
+        from aloha.constants import TASK_CONFIGS
         task_config = TASK_CONFIGS[task_name]
     dataset_dir = task_config['dataset_dir']
     num_episodes = task_config['num_episodes']
@@ -54,23 +66,29 @@ def main(args):
         enc_layers = 4
         dec_layers = 7
         nheads = 8
-        policy_config = {'lr': args['lr'],
-                         'num_queries': args['chunk_size'],
-                         'kl_weight': args['kl_weight'],
-                         'hidden_dim': args['hidden_dim'],
-                         'dim_feedforward': args['dim_feedforward'],
-                         'lr_backbone': lr_backbone,
-                         'backbone': backbone,
-                         'enc_layers': enc_layers,
-                         'dec_layers': dec_layers,
-                         'nheads': nheads,
-                         'camera_names': camera_names,
-                         }
+        policy_config = {
+            'lr': args['lr'],
+            'num_queries': args['chunk_size'],
+            'kl_weight': args['kl_weight'],
+            'hidden_dim': args['hidden_dim'],
+            'dim_feedforward': args['dim_feedforward'],
+            'lr_backbone': lr_backbone,
+            'backbone': backbone,
+            'enc_layers': enc_layers,
+            'dec_layers': dec_layers,
+            'nheads': nheads,
+            'camera_names': camera_names,
+        }
     elif policy_class == 'CNNMLP':
-        policy_config = {'lr': args['lr'], 'lr_backbone': lr_backbone, 'backbone' : backbone, 'num_queries': 1,
-                         'camera_names': camera_names,}
+        policy_config = {
+            'lr': args['lr'],
+            'lr_backbone': lr_backbone,
+            'backbone': backbone,
+            'num_queries': 1,
+            'camera_names': camera_names,
+        }
     else:
-        raise NotImplementedError
+        raise NotImplementedError("policy_class must be one of 'ACT' or 'CNNMLP'")
 
     config = {
         'num_epochs': num_epochs,
@@ -89,7 +107,7 @@ def main(args):
     }
 
     if is_eval:
-        ckpt_names = [f'policy_best.ckpt']
+        ckpt_names = ['policy_best.ckpt']
         results = []
         for ckpt_name in ckpt_names:
             success_rate, avg_return = eval_bc(config, ckpt_name, save_episode=True)
@@ -100,12 +118,18 @@ def main(args):
         print()
         exit()
 
-    train_dataloader, val_dataloader, stats, _ = load_data(dataset_dir, num_episodes, camera_names, batch_size_train, batch_size_val)
+    train_dataloader, val_dataloader, stats, _ = load_data(
+        dataset_dir,
+        num_episodes,
+        camera_names,
+        batch_size_train,
+        batch_size_val,
+    )
 
     # save dataset stats
     if not os.path.isdir(ckpt_dir):
         os.makedirs(ckpt_dir)
-    stats_path = os.path.join(ckpt_dir, f'dataset_stats.pkl')
+    stats_path = os.path.join(ckpt_dir, 'dataset_stats.pkl')
     with open(stats_path, 'wb') as f:
         pickle.dump(stats, f)
 
@@ -113,7 +137,7 @@ def main(args):
     best_epoch, min_val_loss, best_state_dict = best_ckpt_info
 
     # save best checkpoint
-    ckpt_path = os.path.join(ckpt_dir, f'policy_best.ckpt')
+    ckpt_path = os.path.join(ckpt_dir, 'policy_best.ckpt')
     torch.save(best_state_dict, ckpt_path)
     print(f'Best ckpt, val loss {min_val_loss:.6f} @ epoch{best_epoch}')
 
@@ -179,8 +203,8 @@ def eval_bc(config, ckpt_name, save_episode=True):
 
     # load environment
     if real_robot:
-        from aloha_scripts.robot_utils import move_grippers # requires aloha
-        from aloha_scripts.real_env import make_real_env # requires aloha
+        from aloha.robot_utils import move_grippers # requires aloha
+        from aloha.real_env import make_real_env # requires aloha
         env = make_real_env(init_node=True)
         env_max_reward = 0
     else:
@@ -279,7 +303,7 @@ def eval_bc(config, ckpt_name, save_episode=True):
 
             plt.close()
         if real_robot:
-            move_grippers([env.puppet_bot_left, env.puppet_bot_right], [PUPPET_GRIPPER_JOINT_OPEN] * 2, move_time=0.5)  # open
+            move_grippers([env.follower_bot_left, env.follower_bot_right], [FOLLOWER_GRIPPER_JOINT_OPEN] * 2, moving_time=0.5)  # open
             pass
 
         rewards = np.array(rewards)
@@ -431,5 +455,5 @@ if __name__ == '__main__':
     parser.add_argument('--hidden_dim', action='store', type=int, help='hidden_dim', required=False)
     parser.add_argument('--dim_feedforward', action='store', type=int, help='dim_feedforward', required=False)
     parser.add_argument('--temporal_agg', action='store_true')
-    
+
     main(vars(parser.parse_args()))

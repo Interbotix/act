@@ -1,17 +1,15 @@
+import argparse
 import os
-import numpy as np
+
+from aloha.constants import DT, JOINT_NAMES
 import cv2
 import h5py
-import argparse
-
 import matplotlib.pyplot as plt
-from constants import DT
+import numpy as np
 
-import IPython
-e = IPython.embed
 
-JOINT_NAMES = ["waist", "shoulder", "elbow", "forearm_roll", "wrist_angle", "wrist_rotate"]
 STATE_NAMES = JOINT_NAMES + ["gripper"]
+
 
 def load_hdf5(dataset_dir, dataset_name):
     dataset_path = os.path.join(dataset_dir, dataset_name + '.hdf5')

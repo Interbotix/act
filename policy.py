@@ -1,10 +1,12 @@
-import torch.nn as nn
 from torch.nn import functional as F
+import torch.nn as nn
 import torchvision.transforms as transforms
 
-from detr.main import build_ACT_model_and_optimizer, build_CNNMLP_model_and_optimizer
-import IPython
-e = IPython.embed
+from detr.main import (
+    build_ACT_model_and_optimizer,
+    build_CNNMLP_model_and_optimizer,
+)
+
 
 class ACTPolicy(nn.Module):
     def __init__(self, args_override):
@@ -67,6 +69,7 @@ class CNNMLPPolicy(nn.Module):
 
     def configure_optimizers(self):
         return self.optimizer
+
 
 def kl_divergence(mu, logvar):
     batch_size = mu.size(0)
