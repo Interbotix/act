@@ -26,10 +26,8 @@ from act.utils import (
     load_data,
     sample_box_pose,
     sample_insertion_pose,
-    set_seed,
-)
-from act.visualize_episodes import (
     save_videos,
+    set_seed,
 )
 
 
@@ -88,7 +86,7 @@ def main(args):
             'camera_names': camera_names,
         }
     else:
-        raise NotImplementedError("policy_class must be one of 'ACT' or 'CNNMLP'")
+        raise NotImplementedError("policy_class must be one of 'ACT' or 'CNNMLP'.")
 
     config = {
         'num_epochs': num_epochs,
@@ -205,7 +203,17 @@ def eval_bc(config, ckpt_name, save_episode=True):
     if real_robot:
         from aloha.robot_utils import move_grippers # requires aloha
         from aloha.real_env import make_real_env # requires aloha
-        env = make_real_env(init_node=True)
+        from interbotix_common_modules.common_robot.robot import (
+            create_interbotix_global_node,
+            get_interbotix_global_node,
+            robot_startup,
+        )
+        try:
+            node = get_interbotix_global_node()
+        except:
+            node = create_interbotix_global_node('aloha')
+        env = make_real_env(node=node, setup_base=False)
+        robot_startup(node)
         env_max_reward = 0
     else:
         from sim_env import make_sim_env
@@ -303,7 +311,12 @@ def eval_bc(config, ckpt_name, save_episode=True):
 
             plt.close()
         if real_robot:
-            move_grippers([env.follower_bot_left, env.follower_bot_right], [FOLLOWER_GRIPPER_JOINT_OPEN] * 2, moving_time=0.5)  # open
+            # open
+            move_grippers(
+                [env.follower_bot_left, env.follower_bot_right],
+                [FOLLOWER_GRIPPER_JOINT_OPEN] * 2,
+                moving_time=0.5,
+            )
             pass
 
         rewards = np.array(rewards)
