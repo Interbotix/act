@@ -57,6 +57,8 @@ cd /path/to/act/detr && pip install -e .
 
 ## Installation Using conda
 
+### Manual Installation
+
 ```bash
 conda create -n aloha python=3.8.10
 conda activate aloha
@@ -75,6 +77,12 @@ pip install rospkg
 pip install torch
 pip install torchvision
 cd /path/to/act/detr && pip install -e .
+```
+
+### Installation from File
+
+```bash
+conda env create --file=conda_env.yaml
 ```
 
 # Example Usage
