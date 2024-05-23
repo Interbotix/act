@@ -1,17 +1,19 @@
-import time
-import os
-import numpy as np
 import argparse
-import matplotlib.pyplot as plt
+import os
+import time
+
+from aloha.constants import FOLLOWER_GRIPPER_POSITION_NORMALIZE_FN
 import h5py
+import matplotlib.pyplot as plt
+import numpy as np
 
-from constants import FOLLOWER_GRIPPER_POSITION_NORMALIZE_FN, SIM_TASK_CONFIGS
-from ee_sim_env import make_ee_sim_env
-from sim_env import make_sim_env, BOX_POSE
-from scripted_policy import PickAndTransferPolicy, InsertionPolicy
-
-import IPython
-e = IPython.embed
+from act.constants import SIM_TASK_CONFIGS
+from act.ee_sim_env import make_ee_sim_env
+from act.scripted_policy import (
+    InsertionPolicy,
+    PickAndTransferPolicy,
+)
+from act.sim_env import make_sim_env, BOX_POSE
 
 
 def main(args):
