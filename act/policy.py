@@ -1,11 +1,10 @@
-from torch.nn import functional as F
-import torch.nn as nn
-import torchvision.transforms as transforms
-
 from detr.main import (
     build_ACT_model_and_optimizer,
     build_CNNMLP_model_and_optimizer,
 )
+from torch.nn import functional as F
+import torch.nn as nn
+import torchvision.transforms as transforms
 
 
 class ACTPolicy(nn.Module):

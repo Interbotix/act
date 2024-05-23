@@ -1,11 +1,13 @@
+# flake8: noqa
+
 import os
 import pathlib
 
-# Try to import ALOHA package's DATA_DIR, else default to ~/data
+# Try to import ALOHA package's DATA_DIR, else default to ~/aloha_data
 try:
     from aloha.constants import DATA_DIR
 except ImportError:
-    DATA_DIR = os.path.expanduser('~/data')
+    DATA_DIR = os.path.expanduser('~/aloha_data')
 
 ### Simulated task configurations
 

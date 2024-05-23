@@ -1,7 +1,6 @@
 import collections
 import os
 
-from act.constants import XML_DIR
 from aloha.constants import (
     DT,
     START_ARM_POSE,
@@ -16,11 +15,13 @@ from dm_control.suite import base
 import matplotlib.pyplot as plt
 import numpy as np
 
+from act.constants import XML_DIR
+
 
 BOX_POSE = [None] # to be changed from outside
 
 
-def make_sim_env(task_name):
+def make_sim_env(task_name: str):
     """
     Environment for simulated robot bi-manual manipulation, with joint position control
 
@@ -37,13 +38,13 @@ def make_sim_env(task_name):
             left_gripper_position (1),  # normalized gripper position (0: close, 1: open)
             right_arm_qpos (6),         # absolute joint position
             right_gripper_qpos (1)      # normalized gripper position (0: close, 1: open)
-        ]
+        ],
         "qvel": Concat[
             left_arm_qvel (6),          # absolute joint velocity (rad)
             left_gripper_velocity (1),  # normalized gripper velocity (pos: opening, neg: closing)
             right_arm_qvel (6),         # absolute joint velocity (rad)
             right_gripper_qvel (1)      # normalized gripper velocity (pos: opening, neg: closing)
-        ]
+        ],
         "images": {"main": (480x640x3)  # h, w, c, dtype='uint8'
     }
     """
@@ -63,7 +64,7 @@ def make_sim_env(task_name):
         time_limit=20,
         control_timestep=DT,
         n_sub_steps=None,
-        flat_observation=False
+        flat_observation=False,
     )
     return env
 
@@ -74,9 +75,9 @@ class BimanualViperXTask(base.Task):
 
     def before_step(self, action, physics):
         left_arm_action = action[:6]
-        right_arm_action = action[7:7+6]
+        right_arm_action = action[7:7 + 6]
         normalized_left_gripper_action = action[6]
-        normalized_right_gripper_action = action[7+6]
+        normalized_right_gripper_action = action[7 + 6]
 
         left_gripper_action = FOLLOWER_GRIPPER_POSITION_UNNORMALIZE_FN(normalized_left_gripper_action)
         right_gripper_action = FOLLOWER_GRIPPER_POSITION_UNNORMALIZE_FN(normalized_right_gripper_action)
@@ -88,7 +89,7 @@ class BimanualViperXTask(base.Task):
             left_arm_action,
             full_left_gripper_action,
             right_arm_action,
-            full_right_gripper_action
+            full_right_gripper_action,
         ])
         super().before_step(env_action, physics)
         return
@@ -133,7 +134,7 @@ class BimanualViperXTask(base.Task):
     def get_env_state(physics):
         raise NotImplementedError
 
-    def get_observation(self, physics):
+    def get_observation(self, physics) -> collections.OrderedDict:
         obs = collections.OrderedDict()
         obs['qpos'] = self.get_qpos(physics)
         obs['qvel'] = self.get_qvel(physics)
@@ -157,8 +158,8 @@ class TransferCubeTask(BimanualViperXTask):
 
     def initialize_episode(self, physics):
         """Sets the state of the environment at the start of each episode."""
-        # TODO Notice: this function does not randomize the env configuration. Instead, set BOX_POSE from outside
-        # reset qpos, control and box position
+        # TODO Notice: this function does not randomize the env configuration. Instead, set
+        # BOX_POSE from outside reset qpos, control and box position
         with physics.reset_context():
             physics.named.data.qpos[:16] = START_ARM_POSE
             np.copyto(physics.data.ctrl, START_ARM_POSE)
@@ -205,8 +206,8 @@ class InsertionTask(BimanualViperXTask):
 
     def initialize_episode(self, physics):
         """Sets the state of the environment at the start of each episode."""
-        # TODO Notice: this function does not randomize the env configuration. Instead, set BOX_POSE from outside
-        # reset qpos, control and box position
+        # TODO Notice: this function does not randomize the env configuration. Instead, set
+        # BOX_POSE from outside reset qpos, control and box position
         with physics.reset_context():
             physics.named.data.qpos[:16] = START_ARM_POSE
             np.copyto(physics.data.ctrl, START_ARM_POSE)
