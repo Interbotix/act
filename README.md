@@ -1,27 +1,28 @@
 # ACT: Action Chunking with Transformers
 
-Project Websites:
+Original Project Websites:
 
 * [ALOHA](https://tonyzhaozh.github.io/aloha/)
 * [Mobile ALOHA](https://mobile-aloha.github.io/)
 
 This repo contains the implementation of ACT, together with 2 simulated environments:
+
 * Transfer Cube
-* Bimanual Insertion.
+* Bimanual Insertion
 
 You can train and evaluate ACT in simulation or on real hardware.
 For real hardware, you would also need to install [ALOHA](https://github.com/Interbotix/aloha).
 
 # Repo Structure
+
 * act
-  * act
-    * ``detr`` Model definitions of ACT, modified from [DETR](https://github.com/facebookresearch/detr)
-    * ``policy.py`` An adaptor for ACT policy
-    * ``sim_env.py`` Mujoco + DM_Control environments with joint space control
-    * ``ee_sim_env.py`` Mujoco + DM_Control environments with EE space control
-    * ``scripted_policy.py`` Scripted policies for sim environments
-    * ``constants.py`` Constants shared across files
-    * ``utils.py`` Utils such as data loading and helper functions
+  * ``detr`` Model definitions of ACT, modified from [DETR](https://github.com/facebookresearch/detr)
+  * ``policy.py`` An adaptor for ACT policy
+  * ``sim_env.py`` Mujoco + DM_Control environments with joint space control
+  * ``ee_sim_env.py`` Mujoco + DM_Control environments with EE space control
+  * ``scripted_policy.py`` Scripted policies for sim environments
+  * ``constants.py`` Constants shared across files
+  * ``utils.py`` Utils such as data loading and helper functions
   * scripts
     * ``imitate_episodes.py`` Train and Evaluate ACT
     * ``record_sim_episodes.py`` Record episodes using the simulator
