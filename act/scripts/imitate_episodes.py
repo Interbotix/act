@@ -208,12 +208,16 @@ def eval_bc(config, ckpt_name, save_episode=True):
             get_interbotix_global_node,
             robot_startup,
         )
+        from interbotix_common_modules.common_robot.exceptions import InterbotixException
         try:
             node = get_interbotix_global_node()
         except:
             node = create_interbotix_global_node('aloha')
         env = make_real_env(node=node, setup_base=False)
-        robot_startup(node)
+        try:
+            robot_startup(node)
+        except InterbotixException:
+            pass
         env_max_reward = 0
     else:
         from sim_env import make_sim_env
