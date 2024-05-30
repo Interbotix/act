@@ -7,13 +7,13 @@ import h5py
 import matplotlib.pyplot as plt
 import numpy as np
 
-from act.constants import SIM_TASK_CONFIGS
-from act.ee_sim_env import make_ee_sim_env
-from act.scripted_policy import (
+from constants import SIM_TASK_CONFIGS
+from ee_sim_env import make_ee_sim_env
+from scripted_policy import (
     InsertionPolicy,
     PickAndTransferPolicy,
 )
-from act.sim_env import make_sim_env, BOX_POSE
+from sim_env import make_sim_env, BOX_POSE
 
 
 def main(args):

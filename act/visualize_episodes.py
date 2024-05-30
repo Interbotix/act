@@ -6,7 +6,7 @@ import h5py
 import matplotlib.pyplot as plt
 import numpy as np
 
-from act.utils import save_videos
+from utils import save_videos
 
 STATE_NAMES = JOINT_NAMES + ["gripper"]
 

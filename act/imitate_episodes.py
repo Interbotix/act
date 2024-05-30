@@ -13,14 +13,14 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
-from act.policy import (
+from policy import (
     ACTPolicy,
     CNNMLPPolicy,
 )
-from act.sim_env import (
+from sim_env import (
     BOX_POSE,
 )
-from act.utils import (
+from utils import (
     compute_dict_mean,
     detach_dict,
     load_data,
