@@ -12,12 +12,12 @@ from dm_control.rl import control
 from dm_control.suite import base
 import numpy as np
 
-from act.constants import (
+from constants import (
     DT,
     START_ARM_POSE,
     XML_DIR,
 )
-from act.utils import (
+from utils import (
     sample_box_pose,
     sample_insertion_pose,
 )

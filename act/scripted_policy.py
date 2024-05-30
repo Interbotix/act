@@ -5,9 +5,6 @@ from pyquaternion import Quaternion
 from constants import SIM_TASK_CONFIGS
 from ee_sim_env import make_ee_sim_env
 
-import IPython
-e = IPython.embed
-
 
 class BasePolicy:
     def __init__(self, inject_noise=False):
