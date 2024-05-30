@@ -44,6 +44,7 @@ pip install einops
 pip install h5py
 pip install ipython
 pip install matplotlib
+pip install modern_robotics
 pip install mujoco==2.3.7
 pip install opencv-python
 pip install packaging
@@ -53,6 +54,7 @@ pip install pyyaml
 pip install rospkg
 pip install torch
 pip install torchvision
+pip install transforms3d
 cd /path/to/act/detr && pip install -e .
 ```
 
