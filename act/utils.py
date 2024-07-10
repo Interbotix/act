@@ -26,6 +26,7 @@ class EpisodicDataset(torch.utils.data.Dataset):
         dataset_path = os.path.join(self.dataset_dir, f'episode_{episode_id}.hdf5')
         with h5py.File(dataset_path, 'r') as root:
             is_sim = root.attrs['sim']
+            compressed = root.attrs['compress']
             original_action_shape = root['/action'].shape
             episode_len = original_action_shape[0]
             if sample_full_episode:
@@ -38,6 +39,13 @@ class EpisodicDataset(torch.utils.data.Dataset):
             image_dict = dict()
             for cam_name in self.camera_names:
                 image_dict[cam_name] = root[f'/observations/images/{cam_name}'][start_ts]
+
+            # Decompress the images to match the shape of tensor required for torch.einsum()
+            if compressed:
+                for cam_name in image_dict.keys():
+                    decompressed_image = cv2.imdecode(image_dict[cam_name],1)
+                    image_dict[cam_name] = np.array(decompressed_image)
+
             # get all actions after and including start_ts
             if is_sim:
                 action = root['/action'][start_ts:]
