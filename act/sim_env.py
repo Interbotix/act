@@ -15,7 +15,7 @@ from dm_control.suite import base
 import matplotlib.pyplot as plt
 import numpy as np
 
-from act.constants import XML_DIR
+from constants import XML_DIR
 
 
 BOX_POSE = [None] # to be changed from outside
