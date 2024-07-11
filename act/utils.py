@@ -144,7 +144,6 @@ def load_data(dataset_dir, camera_names, batch_size_train, batch_size_val, skip_
         dataset_path_list_list = [find_all_hdf5(dataset_dir, skip_mirrored_data)]
         # get the length of the list. Store it as number of episodes.
         num_episodes = len(dataset_path_list_list[0])
-        print(f"Number of episodes: {num_episodes} ")
 
     # obtain train test split
     train_ratio = 0.8

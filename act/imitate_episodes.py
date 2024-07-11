@@ -52,7 +52,6 @@ def main(args):
         task_config = SIM_TASK_CONFIGS[task_name]
     else:
         from aloha.constants import TASK_CONFIGS
-        print(task_name)
         task_config = TASK_CONFIGS[task_name]
     dataset_dir = task_config['dataset_dir']
     episode_len = task_config['episode_len']
