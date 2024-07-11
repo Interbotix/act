@@ -1,4 +1,5 @@
 import cv2
+import fnmatch
 import numpy as np
 import torch
 import os
@@ -121,8 +122,30 @@ def get_norm_stats(dataset_dir, num_episodes):
     return stats
 
 
-def load_data(dataset_dir, num_episodes, camera_names, batch_size_train, batch_size_val):
+def find_all_hdf5(dataset_dir, skip_mirrored_data):
+    hdf5_files = []
+    for root, dirs, files in os.walk(dataset_dir):
+        for filename in fnmatch.filter(files, '*.hdf5'):
+            if 'features' in filename:
+                continue
+            if skip_mirrored_data and 'mirror' in filename:
+                continue
+            hdf5_files.append(os.path.join(root, filename))
+    print(f'Found {len(hdf5_files)} hdf5 files')
+    return hdf5_files
+
+
+def load_data(dataset_dir, camera_names, batch_size_train, batch_size_val, skip_mirrored_data=False):
     print(f'\nData from: {dataset_dir}\n')
+
+    # verify that the directory passed is a string
+    if isinstance(dataset_dir, str):
+        # get all the episodes from the directory.
+        dataset_path_list_list = [find_all_hdf5(dataset_dir, skip_mirrored_data)]
+        # get the length of the list. Store it as number of episodes.
+        num_episodes = len(dataset_path_list_list[0])
+        print(f"Number of episodes: {num_episodes} ")
+
     # obtain train test split
     train_ratio = 0.8
     shuffled_indices = np.random.permutation(num_episodes)

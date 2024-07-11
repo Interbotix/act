@@ -52,9 +52,9 @@ def main(args):
         task_config = SIM_TASK_CONFIGS[task_name]
     else:
         from aloha.constants import TASK_CONFIGS
+        print(task_name)
         task_config = TASK_CONFIGS[task_name]
     dataset_dir = task_config['dataset_dir']
-    num_episodes = task_config['num_episodes']
     episode_len = task_config['episode_len']
     camera_names = task_config['camera_names']
 
@@ -120,7 +120,6 @@ def main(args):
 
     train_dataloader, val_dataloader, stats, _ = load_data(
         dataset_dir,
-        num_episodes,
         camera_names,
         batch_size_train,
         batch_size_val,
