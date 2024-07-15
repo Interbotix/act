@@ -16,7 +16,6 @@ fuse.cfg
 # Generation results
 results/
 
-
 ray/auth.json
 
 # Byte-compiled / optimized / DLL files

@@ -474,6 +474,4 @@ if __name__ == '__main__':
     parser.add_argument('--temporal_agg', action='store_true')
     argument = vars(parser.parse_args())
 
-    # print(f"Training X, Checkpoint: {argument['ckpt_dir']} ")
-    # sys.exit()
     main(vars(parser.parse_args()))
